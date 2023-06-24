@@ -1,3 +1,5 @@
+use crate::userIO;
+
 const ROW_COL_SIZE: usize = 3;
 
 pub struct Board {
@@ -27,11 +29,11 @@ impl Board {
     }
     pub fn make_move(&mut self, row: usize, col: usize, symbol: char) -> bool {
         if row > ROW_COL_SIZE || row < 1 {
-            println!("Invalid row, try again");
+            userIO::print_warning("Invalid row, try again");
             return false;
         }
         if col > ROW_COL_SIZE || col < 1 {
-            println!("Invalid column, try again");
+            userIO::print_warning("Invalid column, try again");
             return false;
         }
         self.board[row - 1][col - 1] = symbol;
@@ -40,14 +42,11 @@ impl Board {
     }
     pub fn check_win(&self, current_player: char) -> bool {
         if self.check_rows() || self.check_cols() || self.check_diag() {
-            println!(
-                "Winner winner checking dinner ! {} is the Winner !!!!",
-                current_player
-            );
+            userIO::print_info(format!("Winner winner checking dinner ! {} is the Winner !!!!", current_player).as_str());
             return true;
         }
         if self.is_full() {
-            println!("Draw! no one wins today");
+            userIO::print_info("Draw! no one wins today");
             return true;
         }
         false
@@ -93,21 +92,3 @@ impl Board {
     }
 }
 
-pub fn get_input_coordinates(current_player: char) -> Vec<usize> {
-    loop {
-        println!("Current Player: {}", current_player);
-        println!("Enter your move (row, col, e.g. 1 1:");
-        let mut input = String::new();
-        std::io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read input !");
-        let coordinates: Vec<usize> = input
-            .split_whitespace()
-            .map(|s| s.parse().expect("Invalid input!"))
-            .collect();
-        if !coordinates.is_empty() {
-            return coordinates;
-        }
-        println!("Empty move, try again..");
-    }
-}
