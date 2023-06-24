@@ -7,14 +7,15 @@ use crate::board::*;
 fn main() {
     let mut board = Board::new();
 
-    board.display();
-
     let mut current_player = 'X';
     loop {
+        board.display();
         let coordinates = userIO::get_input_coordinates(current_player);
         if coordinates.is_empty() {continue}
-        board.make_move(coordinates[0], coordinates[1], current_player);
-        board.display();
+        if !board.make_move(coordinates[0], coordinates[1], current_player)
+        {
+            continue;
+        }
         if board.check_win(current_player) {
             break;
         }
