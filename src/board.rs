@@ -36,6 +36,11 @@ impl Board {
             userIO::print_warning("Invalid column, try again");
             return false;
         }
+        if self.board[row - 1][col - 1] != ' '
+        {
+            userIO::print_warning("Invalid move, try again");
+            return false;
+        }
         self.board[row - 1][col - 1] = symbol;
         self.move_counter += 1;
         true
@@ -89,6 +94,87 @@ impl Board {
             return true;
         }
         false
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_move() {
+        let mut board = Board::new();
+        assert!(board.make_move(1 , 1, 'X'));
+        assert!(board.make_move(2, 2, 'O'));
+        assert!(board.make_move(3, 3, 'X'));
+    }
+    #[test]
+    fn test_invalid_move() {
+        let mut board = Board::new();
+        assert!(board.make_move(1 , 1, 'X'));
+        assert!(!board.make_move(1, 1, 'O'));
+        assert!(!board.make_move(4, 4, 'X'));
+        assert!(!board.make_move(0, 1, 'X'));
+    }
+    #[test]
+    fn switch_player_test() {
+        let mut current_player = 'X';
+        let board = Board::new();
+        board.switch_player(&mut current_player);
+        assert_eq!(current_player, 'O');
+        board.switch_player(&mut current_player);
+        assert_eq!(current_player, 'X');
+    }
+    #[test]
+    fn check_full_test() {
+        let mut board = Board::new();
+        let current_player = 'X';
+        for i in 1..4 {
+            for j in 1..4 {
+                board.make_move(i, j, current_player);
+            }
+        }
+        assert!(board.is_full())
+    }
+    #[test]
+    fn check_win_test1() {
+        let mut board = Board::new();
+        let current_player = 'X';
+        assert!(!board.check_win(current_player));
+        board.make_move(1, 1, current_player);
+        board.make_move(2, 2, current_player);
+        board.make_move(3, 3, current_player);
+        assert!(board.check_win(current_player));
+    }
+    #[test]
+    fn check_win_test2() {
+        let mut board = Board::new();
+        let current_player = 'O';
+        assert!(!board.check_win(current_player));
+        board.make_move(1, 1, current_player);
+        board.make_move(1, 2, current_player);
+        board.make_move(1, 3, current_player);
+        assert!(board.check_win(current_player));
+    }
+    #[test]
+    fn check_win_test3() {
+        let mut board = Board::new();
+        let current_player = 'X';
+        assert!(!board.check_win(current_player));
+        board.make_move(1, 1, current_player);
+        board.make_move(2, 1, current_player);
+        board.make_move(3, 1, current_player);
+        assert!(board.check_win(current_player));
+    }
+    #[test]
+    fn check_win_test4() {
+        let mut board = Board::new();
+        let current_player = 'O';
+        assert!(!board.check_win(current_player));
+        board.make_move(1, 3, current_player);
+        board.make_move(2, 2, current_player);
+        board.make_move(3, 1, current_player);
+        assert!(board.check_win(current_player));
     }
 }
 
