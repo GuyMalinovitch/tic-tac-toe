@@ -2,6 +2,7 @@
 mod board;
 mod userIO;
 use crate::board::*;
+use crate::userIO::{print_info, print_warning};
 
 
 fn main() {
@@ -12,14 +13,15 @@ fn main() {
         board.display();
         let coordinates = userIO::get_input_coordinates(current_player);
         if coordinates.is_empty() {continue}
-        if !board.make_move(coordinates[0], coordinates[1], current_player)
-        {
-            continue;
+        if let Err(e) = board.make_move(coordinates[0], coordinates[1], current_player) {
+            print_warning(e)
         }
-        if board.check_win(current_player) {
+        if let Ok(e) = board.check_win(current_player) {
+            print_info(e);
             break;
         }
+
         board.switch_player(&mut current_player);
     }
-    println!("Done");
+    print_info("Done");
 }

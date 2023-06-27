@@ -8,8 +8,8 @@ pub fn print_info(string: &str)
 }
 pub fn get_input_coordinates(current_player: char) -> Vec<usize> {
     loop {
-        println!("[tic-tac-toe] Current Player: {}", current_player);
-        println!("[tic-tac-toe] Enter your move (row, col, e.g. 1 1:");
+        print_info(format!("[tic-tac-toe] Current Player: {}", current_player).as_str());
+        print_info("[tic-tac-toe] Enter your move (row, col, e.g. 1 1:");
         let mut input = String::new();
         std::io::stdin()
             .read_line(&mut input)
@@ -19,6 +19,11 @@ pub fn get_input_coordinates(current_player: char) -> Vec<usize> {
             .map(|s| s.parse().expect("Invalid input!"))
             .collect();
         if !coordinates.is_empty() {
+            if coordinates.len() > 2
+            {
+                print_warning(">2 coordinates provided, try again");
+                continue;
+            }
             return coordinates;
         }
         print_warning("Empty move, try again..");
